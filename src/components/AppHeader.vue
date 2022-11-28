@@ -8,31 +8,72 @@
       </CHeaderBrand>
       <CHeaderNav>
         <CDropdown variant="nav-item">
-          <CDropdownToggle placement="bottom-end" class="py-0" :caret="false">
+          <CDropdownToggle placement="bottom-end" class="py-0" :caret="false" @click="toggleLogin()">
             <CAvatar color="secondary" status="danger" size="lg">?</CAvatar>
           </CDropdownToggle>
-          <!-- <CDropdownMenu class="pt-0">
-            <CDropdownItem>
+          <CDropdownMenu class="pt-0">
+            <!-- <CDropdownItem>
               <CIcon icon="cil-lock-locked" /> Logout
-            </CDropdownItem>
-          </CDropdownMenu> -->
+            </CDropdownItem> -->
+          </CDropdownMenu>
         </CDropdown>
       </CHeaderNav>
     </CContainer>
   </CHeader>
+
+  <CModal alignment="center" :visible="loginModel" @close="() => { loginModel = false }">
+    <CModalHeader>
+      <CModalTitle>Login</CModalTitle>
+    </CModalHeader>
+    <CModalBody>
+      <CForm>
+        <CFormLabel>Account</CFormLabel>
+        <CFormInput id="Account" v-model="Account" />
+      </CForm>
+      <CForm>
+        <CFormLabel>Password</CFormLabel>
+        <CFormInput id="password" v-model="password" type="password" />
+      </CForm>
+    </CModalBody>
+    <CModalFooter>
+      <CButton color="primary">Login</CButton>
+      <CButton color="secondary" @click="() => { loginModel = false }">
+        Close
+      </CButton>
+    </CModalFooter>
+  </CModal>
+
+  <CModal size="sm" alignment="center" :visible="logoutModel" @close="() => { logoutModel = false }">
+    <CModalHeader>
+      <CModalTitle>Logout</CModalTitle>
+    </CModalHeader>
+    <CModalFooter>
+      <CButton color="danger">Logout</CButton>
+      <CButton color="secondary" @click="() => { logoutModel = false }">
+        Close
+      </CButton>
+    </CModalFooter>
+  </CModal>
 </template>
   
 <script>
-import { logo } from '@/assets/brand/logo';
-import avatar from '@/assets/images/avatars/user.jpg';
 export default {
   name: 'AppHeader',
-  setup() {
+  data() {
     return {
-      logo,
-      avatar
+      loginModel: false,
+      logoutModel: false,
+      Account: '',
+      password: ''
     }
   },
+  methods: {
+    toggleLogin() {
+      this.loginModel = true;
+      this.Account = '';
+      this.password = '';
+    }
+  }
 }
 </script>
   

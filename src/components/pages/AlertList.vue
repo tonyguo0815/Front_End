@@ -3,43 +3,53 @@
         <CRow>
             <CCard>
                 <CCardBody>
-                    <h2>Alert List</h2>
+                    <h2>Alert List
+                        <CButton>
+                            <CIcon name="cil-sync" />
+                            Update
+                        </CButton>
+                    </h2>
                     <CTable align="middle" reponsive v-if="data.length > 0">
                         <CTableHead>
                             <CTableRow>
                                 <CTableHeaderCell scope="col" class="w-25">Type</CTableHeaderCell>
-                                <CTableHeaderCell scope="col" class="w-25">cameraID</CTableHeaderCell>
                                 <CTableHeaderCell scope="col" class="w-25">Timestamp</CTableHeaderCell>
                                 <CTableHeaderCell scope="col" class="w-25">Description</CTableHeaderCell>
+                                <CTableHeaderCell scope="col" class="w-25"></CTableHeaderCell>
                             </CTableRow>
                         </CTableHead>
                         <CTableBody>
                             <CTableRow v-for="item in data" :key="item.index" @click="showModel(item)">
-                                <CTableDataCell v-if="item.index <= page * size && item.index > (page-1) * size">
-                                    {{item.type}}
+                                <CTableDataCell v-if="item.index <= page * size && item.index > (page - 1) * size">
+                                    {{ item.type }}
                                 </CTableDataCell>
-                              <CTableDataCell v-if="item.index <= page * size && item.index > (page-1) * size">
-                                    {{item.cameraID}}
+                                <CTableDataCell v-if="item.index <= page * size && item.index > (page - 1) * size">
+                                    {{ item.timestamp }}
                                 </CTableDataCell>
-                                <CTableDataCell v-if="item.index <= page * size && item.index > (page-1) * size">
-                                    {{item.timestamp}}
+                                <CTableDataCell v-if="item.index <= page * size && item.index > (page - 1) * size">
+                                    {{ item.description }}
                                 </CTableDataCell>
-                                <CTableDataCell v-if="item.index <= page * size && item.index > (page-1) * size">
-                                    {{item.description}}
+                                <CTableDataCell v-if="item.index <= page * size && item.index > (page - 1) * size">
+                                    <CButton>
+                                        <CIcon name="cil-image" />
+                                    </CButton>
+                                    <CButton>
+                                        <CIcon name="cil-trash" />
+                                    </CButton>
                                 </CTableDataCell>
                             </CTableRow>
                         </CTableBody>
                     </CTable>
                     <CPagination align="end" aria-label="Page navigation example" v-if="data.length > 0">
-                        <CPaginationItem v-for="item in pages" :key="item.index"
-                            :active="page===item ? true : false" @click="page=item">{{item}}
+                        <CPaginationItem v-for="item in pages" :key="item.index" :active="page === item ? true : false"
+                            @click="page = item">{{ item }}
                         </CPaginationItem>
                     </CPagination>
                 </CCardBody>
 
-                <CModal alignment="center" size="lg" :visible="model" @close="() => { model = false }">
+                <CModal alignment="center" size="lg" :visible="imageModel" @close="() => { imageModel = false }">
                     <CModalHeader>
-                        <CModalTitle>Alert Image</CModalTitle>
+                        <CModalTitle>Alert</CModalTitle>
                     </CModalHeader>
                     <CModalBody>
                         <div class="clearfix">
@@ -47,20 +57,32 @@
                         </div>
                     </CModalBody>
                     <CModalFooter>
-                    <CButton color="secondary"  @click="() => { model = false }">
-                        取消
-                    </CButton>
+                        <CButton color="secondary" @click="() => { imageModel = false }">
+                            取消
+                        </CButton>
+                    </CModalFooter>
+                </CModal>
+
+                <CModal size="sm" alignment="center" :visible="deleteModel" @close="() => { deleteModel = false }">
+                    <CModalHeader>
+                        <CModalTitle>Delete Alert</CModalTitle>
+                    </CModalHeader>
+                    <CModalFooter>
+                        <CButton color="danger">Delete</CButton>
+                        <CButton color="secondary" @click="() => { deleteModel = false }">
+                            Close
+                        </CButton>
                     </CModalFooter>
                 </CModal>
 
                 <CToaster placement="top-end">
                     <CToast v-for="(toast, index) in toasts" :delay="2000">
-                    <CToastHeader closeButton>
-                    <span class="me-auto fw-bold">{{toast.title}}</span>
-                    </CToastHeader>
-                    <CToastBody>
-                        {{ toast.content }}
-                    </CToastBody>
+                        <CToastHeader closeButton>
+                            <span class="me-auto fw-bold">{{ toast.title }}</span>
+                        </CToastHeader>
+                        <CToastBody>
+                            {{ toast.content }}
+                        </CToastBody>
                     </CToast>
                 </CToaster>
 
@@ -70,27 +92,31 @@
 </template>
 
 <script>
+import { CButton } from '@coreui/vue';
+
 // import request from '@/utils/request';
 export default {
-    name: 'AlertList',
+    name: "AlertList",
     data() {
         return {
             data: [
-              {
-                type:'有危險行為',
-                cameraID:1,
-                timestamp:'2022/10/13 15:15:15',
-                description:'',
-                index:1
-              }
+                {
+                    type: "有危險行為",
+                    timestamp: "2022/10/13 15:15:15",
+                    description: "",
+                    index: 1
+                }
             ],
             pages: 0,
             page: 1,
             size: 5,
-            model: false,
-            imagePath:'',
+
+            imageModel: false,
+            deleteModel: false,
+
+            imagePath: "",
             toasts: []
-        }
+        };
     },
     mounted() {
         this.init();
@@ -131,10 +157,13 @@ export default {
             //     console.log(err);
             // });
         },
-        showModel(item) {
-            this.model = true;
-            this.imagePath = 'http://127.0.0.1:3000/image/' + item.image;
+        showImageModel(item) {
+            this.imageModel = true;
         },
-    }
+        showDeleteModel(item) {
+            this.deleteModel = true;
+        },
+    },
+    components: { CButton }
 }
 </script>
