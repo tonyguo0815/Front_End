@@ -76,7 +76,7 @@
                 </CModal>
 
                 <CToaster placement="top-end">
-                    <CToast v-for="(toast, index) in toasts" :delay="2000">
+                    <CToast v-for="toast in toasts" :key="toast.index" :delay="2000">
                         <CToastHeader closeButton>
                             <span class="me-auto fw-bold">{{ toast.title }}</span>
                         </CToastHeader>
@@ -92,8 +92,6 @@
 </template>
 
 <script>
-import { CButton } from '@coreui/vue';
-
 // import request from '@/utils/request';
 export default {
     name: "AlertList",

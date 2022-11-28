@@ -28,7 +28,7 @@
     <CModalBody>
       <CForm>
         <CFormLabel>Account</CFormLabel>
-        <CFormInput id="Account" v-model="Account" />
+        <CFormInput id="Account" v-model="account" />
       </CForm>
       <CForm>
         <CFormLabel>Password</CFormLabel>
@@ -36,8 +36,8 @@
       </CForm>
     </CModalBody>
     <CModalFooter>
-      <CButton color="primary">Login</CButton>
-      <CButton color="secondary" @click="() => { loginModel = false }">
+      <CButton color="primary"    @click="login()">Login</CButton>
+      <CButton color="secondary"  @click="() => { loginModel = false }">
         Close
       </CButton>
     </CModalFooter>
@@ -48,31 +48,121 @@
       <CModalTitle>Logout</CModalTitle>
     </CModalHeader>
     <CModalFooter>
-      <CButton color="danger">Logout</CButton>
+      <CButton color="danger" :disabled="buffer">Logout</CButton>
       <CButton color="secondary" @click="() => { logoutModel = false }">
         Close
       </CButton>
     </CModalFooter>
   </CModal>
+
+  <CToaster placement="top-end">
+      <CToast v-for="toast in toasts" :key="toast.index" :delay="2000">
+          <CToastHeader closeButton>
+              <span class="me-auto fw-bold">{{ toast.title }}</span>
+          </CToastHeader>
+          <CToastBody>
+              {{ toast.content }}
+          </CToastBody>
+      </CToast>
+  </CToaster>
 </template>
   
 <script>
+import request from '@/utils/request';
 export default {
   name: 'AppHeader',
   data() {
     return {
       loginModel: false,
       logoutModel: false,
-      Account: '',
-      password: ''
+      account: '',
+      password: '',
+
+      buffer: false,
+
+      toasts: []
     }
   },
   methods: {
     toggleLogin() {
       this.loginModel = true;
-      this.Account = '';
+      this.account = '';
       this.password = '';
-    }
+    },
+
+    login() {
+      if (this.buffer) return;
+
+      this.buffer = true;
+
+      if (this.account === '' || this.password === '') {
+        this.toasts.push({
+          title: 'Error',
+          content: '請確實填入帳號密碼!'
+        });
+        this.buffer = false;
+        return;
+      };
+
+      const data = {
+        account: this.account,
+        password: this.password
+      };
+
+      request
+      .post('/auth/login', data)
+      .then(res => {
+        let data = res.data;
+        switch(data.status) {
+          case 1:
+            this.toasts.push({
+              title: 'Success',
+              content: '登入成功!'
+            });
+            this.loginModel = false;
+          break;
+
+          case 0:
+            this.toasts.push({
+              title: 'Error',
+              content: '系統發生錯誤，請與管理者聯繫!'
+            });
+            this.loginModel = false;
+          break;
+
+          case 101:
+            this.toasts.push({
+              title: 'Error',
+              content: '資料格式錯誤，請與管理者聯繫!'
+            });
+            this.loginModel = false;
+          break;
+
+          case 102:
+            this.toasts.push({
+              title: 'Error',
+              content: '帳號不存在，請確認後再登入!'
+            });
+          break;
+
+          case 103:
+            this.toasts.push({
+              title: 'Error',
+              content: '密碼錯誤，請確認後再登入!'
+            });
+          break;
+        };
+
+        this.buffer = false;
+      })
+      .catch(err => {
+        this.toasts.push({
+          title: 'Error',
+          content: '系統發生錯誤，請與管理者聯繫!'
+        });
+        this.buffer = false;
+      });
+    },
   }
 }
 </script>
