@@ -10,7 +10,9 @@
       <CIcon custom-class-name="sidebar-brand-full" :icon="logoNegative" :height="35" />
       <CIcon custom-class-name="sidebar-brand-narrow" :icon="sygnet" :height="35" />
     </CSidebarBrand>
-    <AppSidebarNavByAdmin />
+    <AppSidebarNavByAdmin v-if="type === 'admin'" />
+    <AppSidebarNavByUser  v-else-if="type === 'user'" />
+    <AppSidebarNavByGuest v-else />
     <CSidebarToggler class="d-none d-lg-flex" @click="$store.commit('toggleUnfoldable')" />
   </CSidebar>
 </template>
@@ -35,6 +37,7 @@ export default {
       sygnet,
       sidebarUnfoldable: computed(() => store.state.sidebarUnfoldable),
       sidebarVisible: computed(() => store.state.sidebarVisible),
+      type: computed(() => store.state.userType)
     }
   },
 }

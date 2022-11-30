@@ -8,13 +8,16 @@
       </CHeaderBrand>
       <CHeaderNav>
         <CDropdown variant="nav-item">
-          <CDropdownToggle placement="bottom-end" class="py-0" :caret="false" @click="toggleLogin()">
+          <CDropdownToggle v-if="$store.state.userType" placement="bottom-end" class="py-0" :caret="false">
+            <CAvatar color="info" status="success" size="lg"><CIcon icon="cil-user" /></CAvatar>
+          </CDropdownToggle>
+          <CDropdownToggle v-else placement="bottom-end" class="py-0" :caret="false" @click="toggleLogin()">
             <CAvatar color="secondary" status="danger" size="lg">?</CAvatar>
           </CDropdownToggle>
           <CDropdownMenu class="pt-0">
-            <!-- <CDropdownItem>
-              <CIcon icon="cil-lock-locked" /> Logout
-            </CDropdownItem> -->
+            <CDropdownItem v-if="$store.state.userType"  @click="logout()">
+              <CIcon icon="cil-lock-locked"/> Logout
+            </CDropdownItem>
           </CDropdownMenu>
         </CDropdown>
       </CHeaderNav>
@@ -112,9 +115,14 @@ export default {
       request
       .post('/auth/login', data)
       .then(res => {
-        let data = res.data;
-        switch(data.status) {
+        let result = res.data;
+        switch(result.status) {
           case 1:
+            this.$store.commit({ type: 'updateUserAccount', value: result.data.account});
+            this.$store.commit({ type: 'updateUserType',    value: result.data.type});
+            this.$store.commit({ type: 'updateUserToken',   value: result.data.token});
+            this.$store.commit({ type: 'updateJwt',         value: result.data.jwt});
+
             this.toasts.push({
               title: 'Success',
               content: '登入成功!'
@@ -151,6 +159,20 @@ export default {
               content: '密碼錯誤，請確認後再登入!'
             });
           break;
+
+          case 104:
+            this.toasts.push({
+              title: 'Error',
+              content: '多次嘗試登入失敗，暫時不允許嘗試登入!'
+            });
+          break;
+
+          case 105:
+            this.toasts.push({
+              title: 'Error',
+              content: '多次嘗試登入失敗，暫時不允許嘗試登入!'
+            });
+          break;
         };
 
         this.buffer = false;
@@ -163,6 +185,18 @@ export default {
         this.buffer = false;
       });
     },
+
+    logout() {
+      this.$store.commit({ type: 'updateUserAccount', value: ''});
+      this.$store.commit({ type: 'updateUserType',    value: ''});
+      this.$store.commit({ type: 'updateUserToken',   value: ''});
+      this.$store.commit({ type: 'updateJwt',         value: ''});
+
+      this.toasts.push({
+        title: 'Success',
+        content: '登出成功!'
+      });
+    }
   }
 }
 </script>

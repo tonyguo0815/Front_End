@@ -10,7 +10,8 @@ export default createStore({
   state: {
     sidebarVisible: '',
     sidebarUnfoldable: false,
-    userName: '',
+    userAccount: '',
+    userType: '',
     userToken: '',
     jwt: ''
   },
@@ -24,8 +25,11 @@ export default createStore({
     updateSidebarVisible(state, payload) {
       state.sidebarVisible = payload.value
     },
-    updateUserName(state, payload) {
-      state.userName = payload.value
+    updateUserAccount(state, payload) {
+      state.userAccount = payload.value
+    },
+    updateUserType(state, payload) {
+      state.userType = payload.value
     },
     updateUserToken(state, payload) {
       state.userToken = payload.value
