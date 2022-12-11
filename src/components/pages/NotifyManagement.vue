@@ -243,6 +243,16 @@ export default {
                         this.checkJWT();
                         break;
 
+                    case 110:
+                        this.toasts.push({
+                            title: 'Error',
+                            content: '資料中存在違規的特殊符號!'
+                        });
+                        this.deleteModel = false;
+                        this.buffer = false;
+                        this.checkJWT();
+                        break;
+
                     case 121:
                         this.toasts.push({
                             title: 'Error',

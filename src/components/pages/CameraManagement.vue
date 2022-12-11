@@ -92,7 +92,7 @@
                         <CFormInput id="Description"    v-model="item.description"/>
                     </CModalBody>
                     <CModalFooter>
-                        <CButton color="info"     @click="updateCamera()" :disabled="buffer"><CIcon name="cil-plus"/> Update</CButton>
+                        <CButton color="info"     @click="updateCamera()" :disabled="buffer"><CIcon name="cil-settings"/> Update</CButton>
                         <CButton color="secondary" @click="() => { settingsModel = false }">
                             <CIcon name="cil-X"/> Close
                         </CButton>
@@ -366,6 +366,16 @@ export default {
                         this.item.channelName = '';
                         break;
 
+                    case 110:
+                        this.toasts.push({
+                            title: 'Error',
+                            content: '資料中存在違規的特殊符號!'
+                        });
+                        this.createModel = false;
+                        this.buffer = false;
+                        this.checkJWT();
+                        break;
+
                     case 121:
                         this.toasts.push({
                             title: 'Error',
@@ -465,6 +475,16 @@ export default {
                         this.buffer = false;
                         break;
 
+                    case 110:
+                        this.toasts.push({
+                            title: 'Error',
+                            content: '資料中存在違規的特殊符號!'
+                        });
+                        this.settingsModel = false;
+                        this.buffer = false;
+                        this.checkJWT();
+                        break;
+
                     case 121:
                         this.toasts.push({
                             title: 'Error',
@@ -538,6 +558,16 @@ export default {
                         this.toasts.push({
                             title: 'Error',
                             content: 'id不存在，請重新操作!'
+                        });
+                        this.deleteModel = false;
+                        this.buffer = false;
+                        this.checkJWT();
+                        break;
+
+                    case 110:
+                        this.toasts.push({
+                            title: 'Error',
+                            content: '資料中存在違規的特殊符號!'
                         });
                         this.deleteModel = false;
                         this.buffer = false;

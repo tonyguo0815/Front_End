@@ -15,7 +15,7 @@
             <CAvatar color="secondary" status="danger" size="lg">?</CAvatar>
           </CDropdownToggle>
           <CDropdownMenu class="pt-0">
-            <CDropdownItem v-if="$store.state.userType"  @click="showResetPassword()">
+            <CDropdownItem v-if="$store.state.userAccount != 'administrator'"  @click="showResetPassword()">
               <CIcon icon="cil-settings"/> ResetPassword
             </CDropdownItem>
             <CDropdownItem v-if="$store.state.userType"  @click="logout()">
@@ -211,6 +211,13 @@ export default {
 
             this.showResetPassword();
             break;
+
+          case 110:
+            this.toasts.push({
+              title: 'Error',
+              content: '資料中存在違規的特殊符號!'
+            });
+            break;
         };
 
         this.buffer = false;
@@ -286,6 +293,8 @@ export default {
       .then(res => {
         let result = res.data;
 
+        console.log(data);
+
         switch(result.status) {
           case 1:
             this.toasts.push({
@@ -329,7 +338,23 @@ export default {
             this.newPassword = '';
             this.checkNewPassword = '';
             break;
-
+          
+            
+          case 104:
+            this.toasts.push({
+              title: 'Error',
+              content: '密碼格式錯誤!'
+            });
+            this.newPassword = '';
+            this.checkNewPassword = '';
+            break;
+            
+          case 110:
+            this.toasts.push({
+              title: 'Error',
+              content: '資料中存在違規的特殊符號!'
+            });
+            break;
         };
 
         this.buffer = false;

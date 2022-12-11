@@ -300,6 +300,16 @@ export default {
                         this.item.channelName = '';
                         break;
 
+                    case 110:
+                        this.toasts.push({
+                            title: 'Error',
+                            content: '資料中存在違規的特殊符號!'
+                        });
+                        this.createModel = false;
+                        this.buffer = false;
+                        this.checkJWT();
+                        break;
+
                     case 121:
                         this.toasts.push({
                             title: 'Error',
@@ -390,6 +400,15 @@ export default {
                             content: 'ChannelName重複!'
                         });
                         break;
+
+                    case 110:
+                        this.toasts.push({
+                            title: 'Error',
+                            content: '資料中存在違規的特殊符號!'
+                        });
+                        this.settingsModel = false;
+                        this.checkJWT();
+                        break;
                 };
 
                 this.buffer = false;
@@ -452,6 +471,13 @@ export default {
                         this.toasts.push({
                             title: 'Error',
                             content: 'Channel使用中，不允許刪除操作!'
+                        });
+                        break;
+
+                    case 110:
+                        this.toasts.push({
+                            title: 'Error',
+                            content: '資料中存在違規的特殊符號!'
                         });
                         break;
                 };

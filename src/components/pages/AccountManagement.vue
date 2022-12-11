@@ -25,10 +25,10 @@
                                     {{item.account}}</CTableDataCell>
                                 <CTableDataCell v-if="item.index <= page * size && item.index > (page-1) * size">
                                     <CButton @click="showSettingModel(item)">
-                                        <CIcon name="cil-settings"/>
+                                        <CIcon name="cil-sync"/>
                                     </CButton>
                                     <CButton @click="showOptionsModel(item)">
-                                        <CIcon name="cil-options"/>
+                                        <CIcon name="cil-settings"/>
                                     </CButton>
                                 </CTableDataCell>
                             </CTableRow>
@@ -69,7 +69,7 @@
                         <CFormCheck v-for="channel in item.bind" :key="channel.value" v-model="channel.checked" :value="channel.value" :label="channel.label"/>
                     </CModalBody>
                     <CModalFooter>
-                        <CButton color="info"       @click="updateBind()" :disabled="buffer"><CIcon name="cil-sync"/> Update</CButton>
+                        <CButton color="info"       @click="updateBind()" :disabled="buffer"><CIcon name="cil-settings"/> Update</CButton>
                         <CButton color="secondary"  @click="() => { optionsModel = false }">
                             <CIcon name="cil-X"/> Close
                         </CButton>
@@ -176,10 +176,8 @@ export default {
                     case 1 :
                         let data = [];
                         result.data.forEach((item, index) => {
-                            if (item.account !== 'administrator') {
-                                item.index = index + 1;
-                                data.push(item);
-                            }
+                            item.index = index + 1;
+                            data.push(item);
                         })
                         this.data = data;
                         if (this.data.length/this.size > 1) {
@@ -331,8 +329,8 @@ export default {
                 switch(result.status) {
                     case 1:
                         this.toasts.push({
-                        title: 'Success',
-                        content: '更新密碼成功!'
+                            title: 'Success',
+                            content: '更新密碼成功!'
                         });
                         this.settingsModel = false;
                         this.checkJWT();
@@ -340,8 +338,8 @@ export default {
 
                     case 0:
                         this.toasts.push({
-                        title: 'Error',
-                        content: '系統發生錯誤，請與管理者聯繫!'
+                            title: 'Error',
+                            content: '系統發生錯誤，請與管理者聯繫!'
                         });
                         this.settingsModel = false;
                         this.checkJWT();
@@ -349,8 +347,8 @@ export default {
 
                     case 101:
                         this.toasts.push({
-                        title: 'Error',
-                        content: '資料格式錯誤，請與管理者聯繫!'
+                            title: 'Error',
+                            content: '資料格式錯誤，請與管理者聯繫!'
                         });
                         this.settingsModel = false;
                         this.checkJWT();
@@ -358,8 +356,8 @@ export default {
 
                     case 102:
                         this.toasts.push({
-                        title: 'Error',
-                        content: '帳號不存在，請重新操作!'
+                            title: 'Error',
+                            content: '帳號不存在，請重新操作!'
                         });
                         this.settingsModel = false;
                         this.checkJWT();
@@ -367,8 +365,17 @@ export default {
 
                     case 103:
                         this.toasts.push({
-                        title: 'Error',
-                        content: '請勿使用最近三次使用過的密碼!'
+                            title: 'Error',
+                            content: '請勿使用最近三次使用過的密碼!'
+                        });
+                        this.newPassword = '';
+                        this.checkNewPassword = '';
+                        break;
+
+                    case 110:
+                        this.toasts.push({
+                            title: 'Error',
+                            content: '資料中存在違規的特殊符號!'
                         });
                         this.newPassword = '';
                         this.checkNewPassword = '';
@@ -466,6 +473,16 @@ export default {
                         this.toasts.push({
                             title: 'Error',
                             content: 'Token不存在，請重新操作!'
+                        });
+                        this.optionsModel = false;
+                        this.buffer = false;
+                        this.checkJWT();
+                        break;
+
+                    case 110:
+                        this.toasts.push({
+                            title: 'Error',
+                            content: '資料中存在違規的特殊符號!'
                         });
                         this.optionsModel = false;
                         this.buffer = false;

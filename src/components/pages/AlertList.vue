@@ -12,16 +12,20 @@
                     <CTable align="middle" reponsive v-if="data.length > 0">
                         <CTableHead>
                             <CTableRow>
-                                <CTableHeaderCell scope="col" class="w-25">Type</CTableHeaderCell>
-                                <CTableHeaderCell scope="col" class="w-25">Timestamp</CTableHeaderCell>
-                                <CTableHeaderCell scope="col" class="w-25">Description</CTableHeaderCell>
-                                <CTableHeaderCell scope="col" class="w-25"></CTableHeaderCell>
+                                <CTableHeaderCell scope="col" class="w-20">Type</CTableHeaderCell>
+                                <CTableHeaderCell scope="col" class="w-20">CameraID</CTableHeaderCell>
+                                <CTableHeaderCell scope="col" class="w-20">Timestamp</CTableHeaderCell>
+                                <CTableHeaderCell scope="col" class="w-20">Description</CTableHeaderCell>
+                                <CTableHeaderCell scope="col" class="w-20"></CTableHeaderCell>
                             </CTableRow>
                         </CTableHead>
                         <CTableBody>
                             <CTableRow v-for="item in data" :key="item.index">
                                 <CTableDataCell v-if="item.index <= page * size && item.index > (page - 1) * size">
                                     {{ item.type }}
+                                </CTableDataCell>
+                                <CTableDataCell v-if="item.index <= page * size && item.index > (page - 1) * size">
+                                    {{ item.cameraID }}
                                 </CTableDataCell>
                                 <CTableDataCell v-if="item.index <= page * size && item.index > (page - 1) * size">
                                     {{ item.timestamp }}
@@ -33,7 +37,7 @@
                                     <CButton @click="showImageModel(item)">
                                         <CIcon name="cil-image"/>
                                     </CButton>
-                                    <CButton @click="showDeleteModel(item)">
+                                    <CButton v-if="$store.state.userType === 'admin'" @click="showDeleteModel(item)">
                                         <CIcon name="cil-trash"/>
                                     </CButton>
                                 </CTableDataCell>
@@ -177,8 +181,24 @@ export default {
                         let data = [];
                         result.data.forEach((item, index) => {
                             item.index = index + 1;
-                            if (item.type === 1) item.type = '有危險行為';
-                            if (item.type === 0) item.type = '無危險行為';
+                            switch (item.type) {
+                                case 1:
+                                    item.type = "Not wearing hat";
+                                    break;
+                                case 0:
+                                    item.type = "Not using hook";
+                                    break;
+                                case 2:
+                                    item.type = "Didn't wear vest";
+                                    break;
+                                case 3:
+                                    item.type = "Not use chinstrap";
+                                    break;
+                                default:
+                                    item.type = '未知';
+                                    break;
+                            };
+
                             data.push(item);
                         })
                         this.data = data;
@@ -214,7 +234,7 @@ export default {
             this.item = item;
             this.imageModel = true;
 
-            this.imagePath = "http://localhost:3000/image/" + item.image;
+            this.imagePath = "/image/" + item.image;
         },
 
         showDeleteModel(item) {
@@ -277,6 +297,16 @@ export default {
                         this.toasts.push({
                             title: 'Error',
                             content: '警報不存在，請重新操作!'
+                        });
+                        this.deleteModel = false;
+                        this.buffer = false;
+                        this.checkJWT();
+                        break;
+
+                    case 110:
+                        this.toasts.push({
+                            title: 'Error',
+                            content: '資料中存在違規的特殊符號!'
                         });
                         this.deleteModel = false;
                         this.buffer = false;
