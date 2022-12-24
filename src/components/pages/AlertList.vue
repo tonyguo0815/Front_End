@@ -9,7 +9,7 @@
                             Update
                         </CButton>
                     </h2>
-                    <CTable align="middle" reponsive v-if="data.length > 0">
+                    <CTable align="middle" responsive>
                         <CTableHead>
                             <CTableRow>
                                 <CTableHeaderCell scope="col" class="w-20">Type</CTableHeaderCell>
@@ -51,24 +51,29 @@
                     </CPagination>
                 </CCardBody>
 
-                <CModal alignment="center" size="lg" :visible="imageModel" @close="() => { imageModel = false }">
+                <CModal alignment="center" size="lg" :visible="imageModel" @close="() => { imageModel = false; reload() }">
                     <CModalHeader>
                         <CModalTitle>Alert</CModalTitle>
                     </CModalHeader>
                     <CModalBody>
                         <CFormLabel>Type</CFormLabel>
                         <CFormInput id="Type"           v-model="item.type" disabled/>
+                        <CFormLabel>CameraID</CFormLabel>
+                        <CFormInput id="CameraID"    v-model="item.cameraID" disabled/>
                         <CFormLabel>Timestamp</CFormLabel>
                         <CFormInput id="Timestamp"      v-model="item.timestamp" disabled/>
-                        <CFormLabel>Description</CFormLabel>
-                        <CFormInput id="Description"    v-model="item.description" disabled/>
                         <br>
+                        <CFormLabel>Image</CFormLabel>
                         <div class="clearfix">
                             <CImage fluid rounded :src="imagePath" />
                         </div>
+                        <CFormLabel>RTSP Live</CFormLabel>
+                        <div class="clearfix">
+                            <CImage fluid rounded :src="rtsp" />
+                        </div>
                     </CModalBody>
                     <CModalFooter>
-                        <CButton color="secondary" @click="() => { imageModel = false }">
+                        <CButton color="secondary" @click="() => { imageModel = false; reload() }">
                             <CIcon name="cil-X"/> Close
                         </CButton>
                     </CModalFooter>
@@ -119,6 +124,7 @@ export default {
             item: {},
 
             imagePath: "",
+            rtsp:"",
 
             buffer: false,
 
@@ -179,6 +185,13 @@ export default {
                 switch (result.status) {
                     case 1 :
                         let data = [];
+
+                        if (result.data.length >= 25) {
+                            this.size = 15;
+                        } else {
+                            this.size = 5;
+                        }
+
                         result.data.forEach((item, index) => {
                             item.index = index + 1;
                             switch (item.type) {
@@ -234,7 +247,8 @@ export default {
             this.item = item;
             this.imageModel = true;
 
-            this.imagePath = "/image/" + item.image;
+            this.imagePath  = "/image/" + item.image;
+            this.rtsp       = "https://rtsp.ap.ngrok.io/video_feed/" + item.cameraID;
         },
 
         showDeleteModel(item) {
@@ -334,7 +348,12 @@ export default {
                 this.buffer = false;
                 this.checkJWT();
             });
-        }
+        },
+
+        reload() {
+            console.log('reload')
+            window.location.reload();
+        },
     },
 }
 </script>

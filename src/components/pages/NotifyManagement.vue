@@ -9,7 +9,7 @@
                             Update
                         </CButton>
                     </h2>
-                    <CTable align="middle" reponsive>
+                    <CTable align="middle" responsive>
                         <CTableHead>
                             <CTableRow>
                                 <CTableHeaderCell scope="col" class="w-25">Target</CTableHeaderCell>
@@ -151,6 +151,13 @@ export default {
                 switch (result.status) {
                     case 1 :
                         let data = [];
+
+                        if (result.data.length >= 25) {
+                            this.size = 15;
+                        } else {
+                            this.size = 5;
+                        }
+
                         result.data.forEach((item, index) => {
                             item.index = index + 1;
                             data.push(item);
